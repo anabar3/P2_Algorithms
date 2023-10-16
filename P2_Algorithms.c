@@ -19,7 +19,7 @@ void InsertionSort (int v[], int n){
     for (i=1;i<n;i++){
         x=v[i];
         j=i-1;
-        while (j>0 && v[j]>x){
+        while (j>=0 && v[j]>x){
             v[j+1] = v[j];
             j=j-1;
         }
@@ -27,13 +27,12 @@ void InsertionSort (int v[], int n){
     }
 }
 
-
 void ShellSort (int v[], int n){
     int increment=n, i, tmp, j;
     bool keepgoing;
     while (increment!=1){
         increment = increment/2;
-        for (i=increment+1; i<n;i++){
+        for (i=increment; i<n;i++){
             tmp = v[i];
             j=i;
             keepgoing=true;
@@ -58,8 +57,8 @@ void print_array(int v[], int n){
 
 bool is_sorted (int v[], int n){
     int i;
-    for (i=0; i<n;i++){
-        if (v[i]>=v[i+1]) return false;
+    for (i=0; i<n-1;i++){
+        if (v[i]>v[i+1]) return false;
     }
     return true;
 }
@@ -93,15 +92,17 @@ void test() {
         random_init(v, size);
         printf("\n\nRandom initialization:\n");
         print_array(v, size);
+        printf("\nIs sorted? %d\n", is_sorted(v, size));
         if(i == 0){
             InsertionSort(v, size);
-            printf("\n\nInsertion sort\n");
+            printf("\nInsertion sort\n");
         }
         else{
             ShellSort(v, size);
-            printf("\n\nShell sort\n");
+            printf("\nShell sort\n");
         }
         print_array(v, size);
+        printf("\nIs sorted? %d\n", is_sorted(v, size));
     }
 }
 
