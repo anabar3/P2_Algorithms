@@ -13,13 +13,12 @@ DATE: 30/09/23
 #include <stdlib.h>
 #include <math.h>
 
-
 void InsertionSort (int v[], int n){
     int i, x, j;
     for (i=1;i<n;i++){
         x=v[i];
         j=i-1;
-        while (j>0 && v[j]>x){
+        while (j>=0 && v[j]>x){
             v[j+1] = v[j];
             j=j-1;
         }
@@ -27,13 +26,12 @@ void InsertionSort (int v[], int n){
     }
 }
 
-
 void ShellSort (int v[], int n){
     int increment=n, i, tmp, j;
     bool keepgoing;
     while (increment!=1){
         increment = increment/2;
-        for (i=increment+1; i<n;i++){
+        for (i=increment; i<n;i++){
             tmp = v[i];
             j=i;
             keepgoing=true;
@@ -58,8 +56,8 @@ void print_array(int v[], int n){
 
 bool is_sorted (int v[], int n){
     int i;
-    for (i=0; i<n;i++){
-        if (v[i]>=v[i+1]) return false;
+    for (i=0; i<n-1;i++){
+        if (v[i]>v[i+1]) return false;
     }
     return true;
 }
@@ -84,47 +82,54 @@ double microseconds() { /* obtains the system time in microseconds */
     return (t.tv_usec + t.tv_sec * 1000000.0);
 }
 
-
-void test() {
-    int a, b, size = 20;
-    int v[size];
-    printf("\n\nCheck algorithms:\n");
-    for (int i=0; i<2; i++) {
-        random_init(v, size);
-        printf("\n\nRandom initialization:\n");
-        print_array(v, size);
-        if(i == 0){
-            InsertionSort(v, size);
-            printf("\n\nInsertion sort\n");
-        }
-        else{
-            ShellSort(v, size);
-            printf("\n\nShell sort\n");
-        }
-        print_array(v, size);
+void copyArray(int source[], int dest[], int size) {
+    int i;
+    for (i = 0; i < size; i++) {
+        dest[i] = source[i];
     }
 }
 
 
+void test() {
+    int size = 20;
+    int v[size], w[size];
+    printf("\n===============================\n");
+    printf("\n\nCheck algorithms:\n");
 
-//P1
-/*
-void test3(int rep) {
+    printf("\n\nRandom initialization:\n");
+    random_init(v, size);
+    copyArray(v, w, size);
+    print_array(v, size);
+    printf("\nIs sorted? %d\n", is_sorted(v, size));
+
+    printf("\nInsertion sort\n");
+    InsertionSort(v, size);
+    print_array(v, size);
+    printf("\nIs sorted? %d\n", is_sorted(v, size));
+
+    printf("\nShell sort\n");
+    ShellSort(w, size);
+    print_array(w, size);
+    printf("\nIs sorted? %d\n", is_sorted(w, size));
+}
+
+void execTimes(int rep) {
     int sizes[7] = {500, 1000, 2000, 4000, 8000, 16000, 32000};
-    printf("\n\ntest 3 (execution times in microseconds)\nRepetitions: %d\n", rep);
+    printf("\n\nExecution times in microseconds\nRepetitions: %d\n", rep);
 
     double totalTime;
-    double testTimeA;
-    double testTimeB;
+    double t1;
+    double t2;
     int a, i, j, k;
 
     for(a = 0; a < 2; a++){
         double meandivdiff = 0;
         
-        printf("\nALGORITHM %d:\n\n", a+1);
         if(a == 0){
+            printf("\nINSERTION SORT:\n");
             printf("%6s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^1.8", "t(n)/n^2", "t(n)/n^2.2");
         }else{
+            printf("\nSHELL SORT:\n");
             printf("%6s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^0.8", "t(n)/n", "t(n)/n^1.2");
         }
         
@@ -137,33 +142,33 @@ void test3(int rep) {
                 random_init(testArray, sizes[i]);
                 
                 if(a == 0){ //take first measure
-                    testTimeA = microseconds(); //start measure
-                    maxSubSum1(testArray, sizes[i]);
-                    testTimeB = microseconds(); //stop measure
+                    t1 = microseconds(); //start measure
+                    InsertionSort(testArray, sizes[i]);
+                    t2 = microseconds(); //stop measure
                 }else{
-                    testTimeA = microseconds(); //start measure
-                    maxSubSum2(testArray, sizes[i]);
-                    testTimeB = microseconds(); //stop measure
+                    t1 = microseconds(); //start measure
+                    ShellSort(testArray, sizes[i]);
+                    t2 = microseconds(); //stop measure
                 }
                 
-                if(testTimeB - testTimeA >= 500){ //big times
-                    totalTime += testTimeB - testTimeA; //sumar al totalTime1
+                if(t2 - t1 >= 500){ //big times
+                    totalTime += t2 - t1; //sumar al totalTime1
                 }
                 else{ //small times
                     if(a == 0){
-                        testTimeA = microseconds(); //start measure
+                        t1 = microseconds(); //start measure
                         for(k = 0; k < 1000; k++){ //repeat 1000 times
-                            maxSubSum1(testArray, sizes[i]);
+                            InsertionSort(testArray, sizes[i]);
                         }
-                        testTimeB = microseconds(); //stop measure
+                        t2 = microseconds(); //stop measure
                     }else{
-                        testTimeA = microseconds(); //start measure
+                        t1 = microseconds(); //start measure
                         for(k = 0; k < 1000; k++){ //repeat 1000 times
-                            maxSubSum2(testArray, sizes[i]);
+                            ShellSort(testArray, sizes[i]);
                         }
-                        testTimeB = microseconds(); //stop measure
+                        t2 = microseconds(); //stop measure
                     }
-                    totalTime += (testTimeB - testTimeA) / 1000;
+                    totalTime += (t2 - t1) / 1000;
                 }
             }
             totalTime = totalTime/rep;
@@ -178,10 +183,11 @@ void test3(int rep) {
         printf("%57.6lf\n", meandivdiff/7);
     }
 }
-*/
+
 
 int main() {
     init_seed();
     test();
+    execTimes(20);
     return 0;
 }
