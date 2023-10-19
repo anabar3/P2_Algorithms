@@ -21,3 +21,20 @@ Kernel:  5.15.0-84-generic
 
 
 Time unit used in the report: microseconds (μs).
+
+EXERCISES:
+
+Exercises 1 and 2
+
+We started by implementing the algorithms. We turned into C code the pseudocode
+given and then checked wheter they gave the expected result. For it we used the
+prompt given, and created a print_array and an is_sorted function. Everything went
+correctly so we proceeded to take measurements.
+
+Exercise 3
+
+
+
+
+
+
