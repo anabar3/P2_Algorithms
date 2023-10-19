@@ -1,0 +1,23 @@
+ALGORITHMS PRACTICE 2
+
+STUDENT 1: Javier Carballal Morgade       LOGIN 1: javier.carballal.morgade@udc.es
+STUDENT 2: Diego Martínez Novoa           LOGIN 2: diego.martinez6@udc.es
+STUDENT 3: Ana Barrera Novas              LOGIN 3: ana.barrera@udc.es
+GROUP: 6.1
+DATE: 21/10/23
+
+********************************************************************
+
+This practice consists in comparing two sorting algorithms, Insert Sort and Shell
+Sort. Next, we will show the details of the measurements taken.
+
+COMPUTER:
+
+Machine: HP OMEN 15-dc0035ns
+CPU:     Intel® Core™ i7-8750H CPU @ 2.20GHz x 12
+RAM:     15,4 GiB
+SO:      Zorin OS 16.3 x86_64
+Kernel:  5.15.0-84-generic
+
+
+Time unit used in the report: microseconds (μs).
