@@ -114,24 +114,37 @@ void test() {
 }
 
 
-void calculateTime(double *totalTime, int testArray[], int size, void (*sortingAlg)(int v[], int n)){
-    double t1, t2, difference;
+double calculateTime(int testArray[], int size, void (*sortingAlg)(int v[], int n)){
+    double t1, t2;
 
     t1 = microseconds(); //start measure
     sortingAlg(testArray, size);
     t2 = microseconds(); //stop measure
     
-    difference = t2 - t1;;
+    double difference = t2 - t1;;
     if(difference >= 500){ //big times
-        *totalTime += difference; //sumar al totalTime1
+        return difference;
     }
     else{ //small times
+        int copyofTest[size];
+        copyArray(testArray, copyofTest, size);
+
+        //measure copy time
+        t1 = microseconds();
+        for(int k = 0; k < 1000; k++){ //repeat 1000 times
+            copyArray(testArray, copyofTest, size);
+        }
+        t2 = microseconds();
+        double copyTime = t2 - t1;
+
+        //measure sorting and substracting copy time
         t1 = microseconds(); //start measure
         for(int k = 0; k < 1000; k++){ //repeat 1000 times
             sortingAlg(testArray, size);
+            copyArray(testArray, copyofTest, size);
         }
         t2 = microseconds(); //stop measure
-        *totalTime += (t2 - t1) / 1000;
+        return (t2-t1-copyTime)/1000;
     }
 }
 
@@ -164,14 +177,13 @@ void execTimes(int rep) {
                 random_init(testArray, sizes[i]);
                 
                 if(a % 2 == 0){
-                    calculateTime(&totalTime, testArray, sizes[i], InsertionSort);
+                    totalTime += calculateTime(testArray, sizes[i], InsertionSort);
                 }
                 else{
-                    calculateTime(&totalTime, testArray, sizes[i], ShellSort);
+                    totalTime += calculateTime(testArray, sizes[i], ShellSort);
                 }
             }
-            totalTime = totalTime/rep;
-
+            totalTime /= rep;
 
             if(a % 2 == 0){
                 printf("  %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", sizes[i], totalTime, totalTime/(pow(sizes[i],1.8)), totalTime/(pow(sizes[i],2)), totalTime/(pow(sizes[i],2.2)));
