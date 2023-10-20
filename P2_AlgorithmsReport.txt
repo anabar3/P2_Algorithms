@@ -8,7 +8,7 @@ DATE: 21/10/23
 
 ********************************************************************
 
-This practice consists in comparing two sorting algorithms, Insert Sort and Shell
+This practice consists in comparing two sorting algorithms, Insertion Sort and Shell
 Sort. Next, we will show the details of the measurements taken.
 
 COMPUTER:
