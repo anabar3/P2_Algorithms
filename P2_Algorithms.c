@@ -3,7 +3,7 @@ STUDENT 1: Javier Carballal Morgade       LOGIN 1: javier.carballal.morgade@udc.
 STUDENT 2: Diego Martínez Novoa           LOGIN 2: diego.martinez6@udc.es
 STUDENT 3: Ana Barrera Novas              LOGIN 3: ana.barrera@udc.es
 GROUP: 6.1
-DATE: 30/09/23
+DATE: 21/10/23
 */
 
 #include <stdio.h>
@@ -75,6 +75,21 @@ void random_init(int v [], int n) {
     /* generate pseudo-random numbers between -n and +n */
 }
 
+void sorted_init(int v[], int n){
+    random_init(v, n);
+    InsertionSort(v, n);
+}
+
+void inverse_init(int v[], int n){
+    sorted_init(v, n);
+    int i, j, temp;
+    for (i = 0, j = n-1; i < j; i++, j--) {
+        temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
+    }
+}
+
 double microseconds() { /* obtains the system time in microseconds */
     struct timeval t;
     if (gettimeofday(&t, NULL) < 0 )
@@ -113,74 +128,147 @@ void test() {
     printf("\nIs sorted? %d\n", is_sorted(w, size));
 }
 
+
+double calculateTime(int testArray[], int size, void (*sortingAlg)(int v[], int n)){
+    double t1, t2, difference;
+    int copyofTest[size];
+    copyArray(testArray, copyofTest, size);
+
+    t1 = microseconds(); //start measure
+    sortingAlg(testArray, size);
+    t2 = microseconds(); //stop measure
+    
+    difference = t2 - t1;;
+    if(difference >= 500){ //big times
+        return difference;
+    }
+    else{ //small times
+        double copyTime;
+        int k;
+
+        //measure copy time
+        t1 = microseconds();
+        for(k = 0; k < 1000; k++){ //repeat 1000 times
+            copyArray(copyofTest, testArray, size);
+        }
+        t2 = microseconds();
+        copyTime = t2 - t1;
+
+        //measure sorting and substracting copy time
+        //printf("BEFORE: ==============================\n");
+        //print_array(testArray, size);
+        //printf("===================================\n\n");
+        t1 = microseconds(); //start measure
+        for(k = 0; k < 1000; k++){ //repeat 1000 times
+            copyArray(copyofTest, testArray, size);
+            sortingAlg(testArray, size);
+        }
+        t2 = microseconds(); //stop measure
+        //printf("AFTER: ==============================\n");
+        //print_array(testArray, size);
+        //printf("===================================\n\n");
+
+        return (t2-t1-copyTime)/1000;
+    }
+}
+
+
 void execTimes(int rep) {
     int sizes[7] = {500, 1000, 2000, 4000, 8000, 16000, 32000};
     printf("\n\nExecution times in microseconds\nRepetitions: %d\n", rep);
 
-    double totalTime;
-    double t1;
-    double t2;
-    int a, i, j, k;
+    double totalTime, meandivdiff;
+    int a, i, j;
+    char asterisk;
 
-    for(a = 0; a < 2; a++){
-        double meandivdiff = 0;
+    //6 DIFFERENT TABLES
+    for(a = 0; a < 6; a++){
+        meandivdiff = 0;
         
-        if(a == 0){
-            printf("\nINSERTION SORT:\n");
-            printf("%6s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^1.8", "t(n)/n^2", "t(n)/n^2.2");
-        }else{
-            printf("\nSHELL SORT:\n");
-            printf("%6s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^0.8", "t(n)/n", "t(n)/n^1.2");
+        //PRINT HEADER
+        switch(a){
+            case 0:
+                printf("\nINSERTION SORT (Random arrays):\n");
+                printf("%8s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^1.8", "t(n)/n^2", "t(n)/n^2.2");
+            break;
+            case 1:
+                printf("\nSHELL SORT (Random arrays):\n");
+                printf("%8s%16s%21s%18s%11s\n", "Size", "t(n)", "t(n)/n*log(n)", "t(n)/n*log^2(n)", "t(n)/n^2");
+            break;
+            case 2:
+                printf("\nINSERTION SORT (Ascending order arrays):\n");
+                printf("%8s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^0.8", "t(n)/n", "t(n)/n^1.2");
+            break;
+            case 3:
+                printf("\nSHELL SORT (Ascending order arrays):\n");
+                printf("%8s%16s%20s%17s%13s\n", "Size", "t(n)", "t(n)/n", "t(n)/n*log(n)", "t(n)/n^2");
+            break;
+            case 4:
+                printf("\nINSERTION SORT (Descending order arrays):\n");
+                printf("%8s%16s%20s%15s%15s\n", "Size", "t(n)", "t(n)/n^1.8", "t(n)/n^2", "t(n)/n^2.2");
+            break;
+            case 5:
+                printf("\nSHELL SORT (Descending order arrays):\n");
+                printf("%8s%16s%20s%17s%13s\n", "Size", "t(n)", "t(n)/n", "t(n)/n*log(n)", "t(n)/n^2");
+            break;
         }
-        
+            
+        //MAKE MEASUREMENTS
         for (i=0; i<7; i++) { //iterate through the different sizes
             
             int testArray[sizes[i]];
             totalTime = 0;
 
             for(j = 0; j < rep; j++){ //make the given repetitions
-                random_init(testArray, sizes[i]);
                 
-                if(a == 0){ //take first measure
-                    t1 = microseconds(); //start measure
-                    InsertionSort(testArray, sizes[i]);
-                    t2 = microseconds(); //stop measure
-                }else{
-                    t1 = microseconds(); //start measure
-                    ShellSort(testArray, sizes[i]);
-                    t2 = microseconds(); //stop measure
+                if(a < 2){
+                    random_init(testArray, sizes[i]);
+                }
+                else if(a < 4){
+                    sorted_init(testArray, sizes[i]);
+                }
+                else{
+                    inverse_init(testArray, sizes[i]);
                 }
                 
-                if(t2 - t1 >= 500){ //big times
-                    totalTime += t2 - t1; //sumar al totalTime1
+                if(a % 2 == 0){
+                    totalTime += calculateTime(testArray, sizes[i], InsertionSort);
                 }
-                else{ //small times
-                    if(a == 0){
-                        t1 = microseconds(); //start measure
-                        for(k = 0; k < 1000; k++){ //repeat 1000 times
-                            InsertionSort(testArray, sizes[i]);
-                        }
-                        t2 = microseconds(); //stop measure
-                    }else{
-                        t1 = microseconds(); //start measure
-                        for(k = 0; k < 1000; k++){ //repeat 1000 times
-                            ShellSort(testArray, sizes[i]);
-                        }
-                        t2 = microseconds(); //stop measure
-                    }
-                    totalTime += (t2 - t1) / 1000;
+                else{
+                    totalTime += calculateTime(testArray, sizes[i], ShellSort);
                 }
             }
-            totalTime = totalTime/rep;
-            if(a == 0){
-                printf("  %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", sizes[i], totalTime, totalTime/(pow(sizes[i],1.8)), totalTime/(pow(sizes[i],2)), totalTime/(pow(sizes[i],2.2)));
+            totalTime /= rep;
+
+            if(totalTime >= 500){
+                asterisk = ' ';
+            }
+            else{
+                asterisk = '*';
+            }
+            //PRINT ROW
+            if(a == 0 || a == 4){
+                //n^2
+                printf("%c   %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", asterisk, sizes[i], totalTime, totalTime/(pow(sizes[i],1.8)), totalTime/(pow(sizes[i],2)), totalTime/(pow(sizes[i],2.2)));
                 meandivdiff += totalTime/(pow(sizes[i],2));
-            }else{
-                printf("  %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", sizes[i], totalTime, totalTime/(pow(sizes[i],0.8)), totalTime/sizes[i], totalTime/(pow(sizes[i],1.2)));
+            }else if(a == 3 || a == 5){
+                //nlog(n)
+                printf("%c   %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", asterisk, sizes[i], totalTime, totalTime/sizes[i], totalTime/(sizes[i]*log(sizes[i])), totalTime/(pow(sizes[i],2)));
+                meandivdiff += totalTime/(sizes[i]*log(sizes[i]));
+            }else if(a == 1){
+                //nlog(n)
+                printf("%c   %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", asterisk, sizes[i], totalTime, totalTime/sizes[i]*log(sizes[i]), totalTime/(sizes[i]*pow(log(sizes[i]),2)), totalTime/(pow(sizes[i],2)));
+                meandivdiff += totalTime/(sizes[i]*pow(log(sizes[i]),2));
+            }
+            else{
+                //n
+                printf("%c   %-5d%15.3lf%20.6lf%15.6lf%15.6lf\n", asterisk, sizes[i], totalTime, totalTime/(pow(sizes[i],0.8)), totalTime/sizes[i], totalTime/(pow(sizes[i],1.2)));
                 meandivdiff += totalTime/sizes[i];
             }
         }
-        printf("%57.6lf\n", meandivdiff/7);
+
+        //Print average
+        printf("%59.6lf\n", meandivdiff/7);
     }
 }
 
@@ -188,6 +276,6 @@ void execTimes(int rep) {
 int main() {
     init_seed();
     test();
-    execTimes(20);
+    execTimes(100);
     return 0;
 }
