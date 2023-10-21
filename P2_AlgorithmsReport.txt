@@ -34,7 +34,7 @@ correctly so we proceeded to take measurements.
 Exercises 3 and 4
 To compare the performance of the algorithms we ran them against random arrays of
 increasing sizes and measured the time taken for each of them to sort them.
-For more reliability, we made 50 measurements with different random arrays for each 
+For more reliability, we made 20 measurements with different random arrays for each 
 size and and took the average value. 
 
 To check the complexity and times depending on the state of the original array, we 
