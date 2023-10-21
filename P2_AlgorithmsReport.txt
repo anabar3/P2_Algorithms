@@ -77,7 +77,8 @@ We initially tested complexities assuming O(n^2), which was the correct assumpti
 for Insertion Sort (constant 0.000753), but not for Shell Sort. We saw that the values
 were decreasing, indicating that it was an upper bound. We tried with O(nlog(n)), 
 but values were increasing (lower bound), until we found the constant value 0.002071
-at n*log^2(n). 
+at n*log^2(n). Still, we can see that it decreases a little bit, meaning that it is a bit
+slower than that.
 
 In this test, we found anomalous values showing up in the first measurement (Insertion
 Sort, size 500), taking longer than expected. These disappear when increasing the number 
@@ -134,21 +135,21 @@ INSERTION SORT (Descending order arrays):
                                                    0.001122
 
 SHELL SORT (Descending order arrays):
-    Size            t(n)              t(n)/n    t(n)/n*log(n)     t(n)/n^2
-*   500           18.835            0.037669       0.006061       0.000075
-*   1000          43.272            0.043272       0.006264       0.000043
-*   2000          99.729            0.049865       0.006560       0.000025
-*   4000         214.593            0.053648       0.006468       0.000013
-*   8000         477.882            0.059735       0.006647       0.000007
-    16000       1018.730            0.063671       0.006577       0.000004
-    32000       2206.470            0.068952       0.006647       0.000002
-                                                   0.006461
-
+    Size            t(n)       t(n)/n*log(n)  t(n)/n*log^2(n)     t(n)/n^2
+*   500           18.800            0.233666       0.000974       0.000075
+*   1000          42.988            0.296952       0.000901       0.000043
+*   2000          96.697            0.367491       0.000837       0.000024
+*   4000         213.050            0.441762       0.000774       0.000013
+*   8000         476.724            0.535552       0.000738       0.000007
+    16000       1094.790            0.662371       0.000730       0.000004
+    32000       2249.440            0.729205       0.000653       0.000002
+                                                   0.000801
 
 Again, checking bounds and observing the results we see that in the worst and last case,
 we find that Insertion Sort stays like in the average case, having a complexity of O(n^2).
-The constant obtained for it was 0.001122. Shell Sort has has a complexity of ... here, with
-a constant of 0.006461.
+The constant obtained for it was 0.001122. Shell Sort has has a complexity of O(n*log^2(n))
+here, also like average case, but we can see that the constant value (0.000801) is still 
+decreasing a little, meaning that it is a bit slower.
 
 We didn't find any anomalous values here, like in the ascending order case, so
 we can again conclude that Shell Sort is faster than Insertion Sort.
