@@ -45,9 +45,11 @@ An asterisk (*) is used for cases where the time taken by the first measurement 
 smaller than 500 microseconds, where the method of the measurement is overriden by
 a different one, more precise with small times. The only change is that the time is 
 calculated by repeating the function 1000 times and then dividing in order to get the
-average time. 
+average time. Since the sorting algorithms change the original array, we reset it each
+time, and the time taken by the reset is also calculated and substracted to the total 
+time to get more accurate measurements.
 
-With all of this we could get this results, which we will analyse step by step:
+With all of this we could get these results, which we will analyse step by step:
 
 INSERTION SORT (Random arrays):
     Size            t(n)          t(n)/n^1.8       t(n)/n^2     t(n)/n^2.2
@@ -77,8 +79,8 @@ We initially tested complexities assuming O(n^2), which was the correct assumpti
 for Insertion Sort (constant 0.000753), but not for Shell Sort. We saw that the values
 were decreasing, indicating that it was an upper bound. We tried with O(nlog(n)), 
 but values were increasing (lower bound), until we found the constant value 0.002071
-at n*log^2(n). Still, we can see that it decreases a little bit, meaning that it is a bit
-slower than that.
+at n*log^2(n). Still, we can see that it decreases a little bit, suggesting that it grows 
+a bit slower than that.
 
 In this test, we found anomalous values showing up in the first measurement (Insertion
 Sort, size 500), taking longer than expected. These disappear when increasing the number 
@@ -112,7 +114,7 @@ SHELL SORT (Ascending order arrays):
                                                    0.004396
 
 Following the same procedure that we explained in the average case, in this we find 
-that Insertion Sort is faster than Shell Sort. This is because the of first algorithm's
+that Insertion Sort is faster than Shell Sort. This is because of the first algorithm's
 complexity when receiving an already sorted algorithm, that turns into linear (in t(n)/n 
 we obtain a constant 0.003024), which makes a big difference from the average case. In Shell
 Sort, we also have a difference, but not as big, having a constant in t(n)/n*log(n) (0.004396).
@@ -148,8 +150,8 @@ SHELL SORT (Descending order arrays):
 Again, checking bounds and observing the results we see that in the worst and last case,
 we find that Insertion Sort stays like in the average case, having a complexity of O(n^2).
 The constant obtained for it was 0.001122. Shell Sort has has a complexity of O(n*log^2(n))
-here, also like average case, but we can see that the constant value (0.000801) is still 
-decreasing a little, meaning that it is a bit slower.
+here, also like average case, but we can see that again the constant value (0.000801) is still 
+decreasing a little, meaning that actual growth is a bit slower (but still faster than n*log(n)).
 
 We didn't find any anomalous values here, like in the ascending order case, so
 we can again conclude that Shell Sort is faster than Insertion Sort.
@@ -161,6 +163,5 @@ theoretical complexity of the algorithms are empirically checked. Taking everyth
 have seen into account, we obtain that Insertion Sort is overall slower than Shell Sort,
 except for the best case, where the array is already sorted, where the first algorithm 
 shows better performance.
-
 
 
