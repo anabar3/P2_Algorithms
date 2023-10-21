@@ -27,14 +27,140 @@ EXERCISES:
 Exercises 1 and 2
 
 We started by implementing the algorithms. We turned into C code the pseudocode
-given and then checked wheter they gave the expected result. For it we used the
+given and then checked whether they gave the expected result. For it we used the
 prompt given, and created a print_array and an is_sorted function. Everything went
 correctly so we proceeded to take measurements.
 
-Exercise 3
+Exercises 3 and 4
+To compare the performance of the algorithms we ran them against random arrays of
+increasing sizes and measured the time taken for each of them to sort them.
+For more reliability, we made 50 measurements with different random arrays for each 
+size and and took the average value. 
+
+To check the complexity and times depending on the state of the original array, we 
+added two functions to create random arrays already sorted (sorted_init) and in
+descending order (reverse_init).
+
+An asterisk (*) is used for cases where the time taken by the first measurement is 
+smaller than 500 microseconds, where the method of the measurement is overriden by
+a different one, more precise with small times. The only change is that the time is 
+calculated by repeating the function 1000 times and then dividing in order to get the
+average time. 
+
+With all of this we could get this results, which we will analyse step by step:
+
+INSERTION SORT (Random arrays):
+    Size            t(n)          t(n)/n^1.8       t(n)/n^2     t(n)/n^2.2
+*   500          220.969            0.003063       0.000884       0.000255
+    1000         821.150            0.003269       0.000821       0.000206
+    2000        3044.990            0.003481       0.000761       0.000166
+    4000       12493.510            0.004102       0.000781       0.000149
+    8000       49833.610            0.004699       0.000779       0.000129
+    16000     174033.430            0.004712       0.000680       0.000098
+    32000     582346.580            0.004528       0.000569       0.000071
+                                                   0.000753
+
+SHELL SORT (Random arrays):
+    Size            t(n)        t(n)/n*log(n)   t(n)/n*log^2(n)   t(n)/n^2
+*   500           39.891            0.495809       0.002066       0.000160
+*   1000         103.522            0.715101       0.002169       0.000104
+*   2000         247.081            0.939020       0.002138       0.000062
+    4000         585.880            1.214829       0.002129       0.000037
+    8000        1315.240            1.477540       0.002035       0.000021
+    16000       2961.480            1.791759       0.001975       0.000012
+    32000       6830.840            2.214364       0.001984       0.000007
+                                                   0.002071
 
 
+In the results of the average case we can see that Shell Sort is much faster than Insertion. 
+We initially tested complexities assuming O(n^2), which was the correct assumption
+for Insertion Sort (constant 0.000753), but not for Shell Sort. We saw that the values
+were decreasing, indicating that it was an upper bound. We tried with O(nlog(n)), 
+but values were increasing (lower bound), until we found the constant value 0.002071
+at n*log^2(n). Still, we can see that it decreases a little bit, meaning that it is a bit
+slower than that.
 
+In this test, we found anomalous values showing up in the first measurement (Insertion
+Sort, size 500), taking longer than expected. These disappear when increasing the number 
+of arrays we use to find the average.
+
+With that, we can conclude that in the average cases for these algorithms we have a 
+complexity of O(n^2) for Insertion Sort and O(n*log^2(n)) for Shell Sort, making the 
+second better.
+
+
+INSERTION SORT (Ascending order arrays):
+    Size            t(n)          t(n)/n^0.8         t(n)/n     t(n)/n^1.2
+*   500            1.544            0.010705       0.003089       0.000891
+*   1000           2.977            0.011850       0.002977       0.000748
+*   2000           6.142            0.014043       0.003071       0.000672
+*   4000          11.930            0.015668       0.002983       0.000568
+*   8000          24.320            0.018344       0.003040       0.000504
+*   16000         48.222            0.020891       0.003014       0.000435
+*   32000         95.785            0.023833       0.002993       0.000376
+                                                   0.003024
+
+SHELL SORT (Ascending order arrays):
+    Size            t(n)              t(n)/n    t(n)/n*log(n)     t(n)/n^2
+*   500           12.819            0.025638       0.004125       0.000051
+*   1000          29.465            0.029465       0.004266       0.000029
+*   2000          66.187            0.033093       0.004354       0.000017
+*   4000         145.645            0.036411       0.004390       0.000009
+*   8000         320.362            0.040045       0.004456       0.000005
+    16000        702.080            0.043880       0.004533       0.000003
+    32000       1542.540            0.048204       0.004647       0.000002
+                                                   0.004396
+
+Following the same procedure that we explained in the average case, in this we find 
+that Insertion Sort is faster than Shell Sort. This is because the of first algorithm's
+complexity when receiving an already sorted algorithm, that turns into linear (in t(n)/n 
+we obtain a constant 0.003024), which makes a big difference from the average case. In Shell
+Sort, we also have a difference, but not as big, having a constant in t(n)/n*log(n) (0.004396).
+In these cases we didn't receive any anomalous value.
+
+With that, we can conclude that in the best cases for these algorithms we have a 
+complexity of O(n) for Insertion Sort and O(n*log(n)) for Shell Sort, making the first
+better.
+
+
+INSERTION SORT (Descending order arrays):
+    Size            t(n)          t(n)/n^1.8       t(n)/n^2     t(n)/n^2.2
+*   500          280.886            0.003894       0.001124       0.000324
+    1000        1116.700            0.004446       0.001117       0.000281
+    2000        4452.390            0.005090       0.001113       0.000243
+    4000       18304.860            0.006010       0.001144       0.000218
+    8000       73288.130            0.006910       0.001145       0.000190
+    16000     283160.520            0.007667       0.001106       0.000160
+    32000    1133069.140            0.008810       0.001107       0.000139
+                                                   0.001122
+
+SHELL SORT (Descending order arrays):
+    Size            t(n)       t(n)/n*log(n)  t(n)/n*log^2(n)     t(n)/n^2
+*   500           18.800            0.233666       0.000974       0.000075
+*   1000          42.988            0.296952       0.000901       0.000043
+*   2000          96.697            0.367491       0.000837       0.000024
+*   4000         213.050            0.441762       0.000774       0.000013
+*   8000         476.724            0.535552       0.000738       0.000007
+    16000       1094.790            0.662371       0.000730       0.000004
+    32000       2249.440            0.729205       0.000653       0.000002
+                                                   0.000801
+
+Again, checking bounds and observing the results we see that in the worst and last case,
+we find that Insertion Sort stays like in the average case, having a complexity of O(n^2).
+The constant obtained for it was 0.001122. Shell Sort has has a complexity of O(n*log^2(n))
+here, also like average case, but we can see that the constant value (0.000801) is still 
+decreasing a little, meaning that it is a bit slower.
+
+We didn't find any anomalous values here, like in the ascending order case, so
+we can again conclude that Shell Sort is faster than Insertion Sort.
+
+
+Conclusion
+In all the tests bounds work as they should, measurements are adecuate and the 
+theoretical complexity of the algorithms are empirically checked. Taking everything we
+have seen into account, we obtain that Insertion Sort is overall slower than Shell Sort,
+except for the best case, where the array is already sorted, where the first algorithm 
+shows better performance.
 
 
 
